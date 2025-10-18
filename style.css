@@ -17,8 +17,12 @@ body {
 }
 
 header {
+    background: linear-gradient(rgb(67, 129, 215), rgb(126, 189, 233));
     height: 66px;
-    line-height: 66px;
+    border-radius: 3px;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
 }
 
 nav ul {
