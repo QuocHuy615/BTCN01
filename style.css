@@ -37,15 +37,26 @@ header h4 {
         -1px  1px 0 #000, 
         1px  1px 0 #000; 
     letter-spacing: 5px;
-    margin-top: 13px;
+    margin-top: 15px;
+}
+
+nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 nav ul {
     display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    max-width: 500px;
+    width: 100%;
+   
 }
 
 nav li {
-    
+
 }
 
 #content {
