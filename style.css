@@ -96,6 +96,7 @@ main {
     color: rgb(228, 172, 67);
     text-align: center;
     border: 1px solid orange;
+    font-size: 17px;
 }
 
 #footer a {
@@ -104,5 +105,15 @@ main {
   padding: 4px 8px;
   border-radius: 4px;
   transition: 0.3s;
+}
+
+ #footer a.active {
+  background-color: orange;
+  color: white;
+}
+
+#footer a:hover {
+  background-color: #ffb84d;
+  color: white;
 }
 
