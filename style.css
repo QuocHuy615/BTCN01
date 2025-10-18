@@ -89,7 +89,20 @@ main {
     padding: 10px;
 }
 
-footer {
+#footer {
     height: 33px;
     line-height: 33px;
+    background-color: rgb(244, 231, 180);
+    color: rgb(228, 172, 67);
+    text-align: center;
+    border: 1px solid orange;
 }
+
+#footer a {
+  color: orange;
+  text-decoration: underline;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: 0.3s;
+}
+
