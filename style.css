@@ -1,5 +1,5 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Times New Roman', serif;
     background-color: #f8f8ff;
     margin: 0;
     display: flex;
@@ -52,11 +52,28 @@ nav ul {
     padding: 10px;
     max-width: 500px;
     width: 100%;
-   
+    margin-top: -10px;
+    background-color: rgb(159, 190, 237);
+    height: 8px;
+    align-items: center;
+    list-style: none;
+    border-radius: 3px;
+    box-shadow: 0 0 7px rgba(0, 0, 0, 0.5); 
+    
 }
 
 nav li {
+    cursor: pointer;
+    font-size: 17px;
 
+}
+
+nav li:hover {
+    color: orange;
+}
+
+nav li.active {
+    color: orange;
 }
 
 #content {
