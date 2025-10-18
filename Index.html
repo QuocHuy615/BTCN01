@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BTCN01 - 23120272</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <!-- HEDAER -->
+        <header>
+            <h1>Bài Tập 1 - 23120272</h1>
+        </header>
+
+        <!-- NAV -->
+        <nav>
+            <ul>
+                <li>Menu 1</li>
+                <li>Menu 2</li>
+                <li>Menu 3</li>
+                <li>Menu 4</li>
+                <li>Menu 5</li>
+            </ul>
+        </nav>
+
+        <div id="content">
+            <!-- SIDEBAR -->
+            <aside>
+                <div class="news" id="news1"><h3>NEWS 01</h3><p>Lorem ipsum...</p></div>
+                <div class="news" id="news2"><h3>NEWS 02</h3><p>...</p></div>
+                <div class="news" id="news3"><h3>NEWS 03</h3><p>...</p></div>
+                <div class="news" id="news4"><h3>NEWS 04</h3><p>...</p></div>
+            </aside>
+
+            <main>
+                <section id="ProcessText">
+                    <div class="ControlBar">
+                        <span>Process Text</span>
+                        <span class="properties">
+                            <input type="text" id="pattern" placeholder="input text"/>
+                            <button id="btnHighlight">Highlight</button>
+                            <button id="btnDelete">Delete</button>
+                            <button id="btnReset">Reset</button>
+                        </span>
+                        <span class="format">
+                            <span id="sampleText">SampleText</span>
+                            <input type="color" id="btnColor" value="#FF4500"/>
+                            <button id="btnStyle">🛠</button>
+                        </span>
+                    </div>
+
+                    <div id="stylePanel" class="popup hidden">
+                        <label><input type="checkbox" id="optBold"/> Bold</label><br/>
+                        <label><input type="checkbox" id="optItalic"/> Italic</label><br/>
+                        <label><input type="checkbox" id="optUnderline"/> Underline</label><br/>
+                        <label><input type="color" id="optBackground" value="#fff59d"/> Background</label>
+                    </div>
+
+                    <div id="textWrap">
+                        <div id="content" class="text">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ipsa ratione dolorum, sunt deleniti laborum asperiores molestias! Provident cumque amet, quod cupiditate, ut animi sequi voluptate numquam, possimus quo quisquam minima.
+                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Tempora distinctio, expedita nostrum natus culpa ipsa veritatis labore incidunt, beatae quibusdam maiores dolorum. Quaerat provident pariatur aliquam earum excepturi ratione fugit?
+                            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptatem odit doloribus rem. Tempora ullam id porro, exercitationem fuga nihil minus eveniet.
+                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Id, vel, nulla distinctio numquam quae praesentium optio velit quo sapiente quidem cumque iure ex aperiam debitis error fuga voluptates. Maiores, sapiente?
+                        </div>
+                    </div>
+                </section>
+
+                <!-- drag and drop -->
+                 <section>
+                    <div class="dragDropBar">
+                        <span>Drag and Drop</span>
+                        <span class="controls">
+                            <select id="slctAnimal">
+                                <option value="🐁">🐁</option>
+                                <option value="🐃">🐃</option>
+                                <option value="🐅">🐅</option>
+                                <option value="🐈">🐈</option>
+                                <option value="🐉">🐉</option>
+                                <option value="🐍">🐍</option>
+                                <option value="🐎">🐎</option>
+                                <option value="🐐">🐐</option>
+                                <option value="🐒">🐒</option>
+                                <option value="🐓">🐓</option>
+                                <option value="🐕">🐕</option>
+                                <option value="🐖">🐖</option>
+                            </select>
+                            <button id="btnAdd">Add New</button>
+                        </span>
+                    </div>
+                    <div id="board" class="grid">
+
+                    </div>
+                 </section>
+            </main>
+        </div>
+
+        <footer id="footer">
+            Copyright © <span id="nickname">LeQuocHuy</span> |
+            <a href="#">Menu 1</a> | <a href="#">Menu 2</a> | <a href="#">Menu 3</a> | <a href="#">Menu 4</a> | <a href="#">Menu 5</a>
+        </footer>
+    </div>
+</body>
+</html>
