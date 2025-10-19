@@ -90,6 +90,7 @@ $(".drag-btn").on("mousedown", function (e) {
     dragStartY = e.pageY;
     hoverTarget = null;
 
+    $(document).on("mousemove.drag", onDrag);
 });
 
 function ensureGhost() {
@@ -112,4 +113,44 @@ function ensureGhost() {
 
     side.append(ghost);
 }
+
+function onDrag(e) {
+    if (!dragging) {
+        return;
+    }
+
+    if (!ghost) {
+      const moveDistance = Math.abs(e.pageY - dragStartY);
+        if (moveDistance < 1) {
+            return;
+        }
+        ensureGhost();
+    }
+
+    if (!ghost) {
+        return;
+    }
+
+    const side = $("#side");
+    const sideTop = side.offset().top;
+    const relY = e.pageY - sideTop - offsetY;
+
+    const maxY = side.height() - ghost.outerHeight();
+    const newY = Math.max(0, Math.min(relY, maxY));
+
+    ghost.css({ top: newY, left: dragging.position().left });
+
+    // Detect which news item is hovered
+    hoverTarget = null;
+    $(".news").not(dragging).each(function () {
+        const top = $(this).offset().top;
+        const bottom = top + $(this).outerHeight();
+        if (e.pageY >= top && e.pageY <= bottom) {
+            $(".news").removeClass("hover-target");
+            $(this).addClass("hover-target");
+            hoverTarget = $(this);
+            return false;
+        }
+    });
+  }
 
