@@ -81,8 +81,38 @@ nav li.active {
 }
 
 #side {
+    position: relative;
+    overflow: hidden;
     width: 256px;
+    background-color: #f8f8f8;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
 }
+
+.news {
+    border: 1px solid #d2b48c;
+    border-radius: 2px;
+    background-color: #fff;
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+    height: auto; 
+}
+
+.news-header {
+    background-color: rgb(245, 207, 138);
+    height: 45px;
+    color: rgb(152, 153, 156);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 6px 10px;
+    transition: background-color 0.3s;
+}
+
 
 main {
     flex: 1;
