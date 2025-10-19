@@ -81,6 +81,15 @@ nav li.active {
     border-top: 1px solid rgb(34, 79, 175);
 }
 
+#mainText {
+    display: block; 
+    color: #111;    
+    padding: 8px 6px;
+    line-height: 1.6;
+    font-size: 24px;
+    margin: 10px 0 20px 5px;
+}
+
 #side {
     position: relative;
     overflow: hidden;
@@ -116,6 +125,9 @@ nav li.active {
 
 #ProcessText {
     margin-top: -5px;
+    border: 1px solid grey;
+    border-top-right-radius: 5px;
+    border-top-left-radius: 5px;
 }
 
 .format {
@@ -128,7 +140,7 @@ nav li.active {
     display: flex;
     font-size: 18px;
     justify-content: space-around;
-    gap: 50px;
+    gap: 10px;
     align-items: center;
     background: linear-gradient(rgb(182, 207, 242), rgb(73, 102, 205));
     height: 50px;
@@ -170,7 +182,7 @@ nav li.active {
     gap: 3px;
 }
 
-.text {
+.processTextTitle {
     font-weight: bold;
     color:white;
     font-size: 20px;
@@ -265,6 +277,34 @@ main {
     flex: 1;
     padding: 10px;
 }
+
+.dragDropBar {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    margin-top: 10px;
+    background: linear-gradient(rgb(182, 207, 242), rgb(73, 102, 205));
+    height: 50px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    justify-content: center;
+    align-items: center;
+}
+
+.dragDropBar > span:first-child {
+  flex: 1;
+  text-align: left;
+}
+
+.controls {
+    display: flex;
+    position: absolute;
+    align-items: center;
+    left: 50%;
+    gap: 8px;
+}
+
+
 
 #footer {
     height: 33px;
