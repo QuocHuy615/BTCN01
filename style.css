@@ -147,6 +147,8 @@ nav li.active {
 }
 
 .properties button {
+    position: relative;
+    overflow: hidden;
     color: white;
     border-radius: 20px;
     background: linear-gradient(rgb(32, 121, 222), rgb(69, 69, 213));
@@ -156,6 +158,31 @@ nav li.active {
     border: none;
     font-size: 15px;
     cursor: pointer;
+    z-index: 1;
+}
+
+.properties button::after {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 0%;
+    content: "";
+    transition: height 0.4s ease;
+    background: rgba(35, 176, 223, 0.4);
+    z-index: 0;
+    border-radius: inherit;
+    pointer-events: none;
+}
+
+.properties button:hover::after {
+    height: 75%;
+}
+
+.properties button:active {
+    transform: translateY(2px) scale(0.99);
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.25);
+    transition: transform 0.08s ease, box-shadow 0.08s ease;
 }
 
 .format {
