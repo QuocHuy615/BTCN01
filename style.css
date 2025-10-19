@@ -78,6 +78,7 @@ nav li.active {
 
 #content {
     display: flex;
+    border-top: 1px solid rgb(34, 79, 175);
 }
 
 #side {
@@ -85,7 +86,7 @@ nav li.active {
     overflow: hidden;
     width: 256px;
     background-color: #f8f8f8;
-    padding: 5px;
+    padding: 7px;
     display: flex;
     flex-direction: column;
     gap: 3px;
@@ -102,7 +103,7 @@ nav li.active {
 
 .news-header {
     background-color: rgb(245, 207, 138);
-    height: 45px;
+    height: 30px;
     color: rgb(152, 153, 156);
     display: flex;
     align-items: center;
@@ -111,6 +112,87 @@ nav li.active {
     font-weight: bold;
     padding: 6px 10px;
     transition: background-color 0.3s;
+}
+
+#ProcessText {
+    margin-top: -5px;
+}
+
+
+.ControlBar {
+    display: flex;
+    font-size: 18px;
+    justify-content: space-around;
+    gap: 50px;
+    align-items: center;
+    background: linear-gradient(rgb(182, 207, 242), rgb(73, 102, 205));
+    height: 50px;
+    border-top-right-radius: 5px;
+    border-top-left-radius: 5px;
+}
+
+.text {
+    font-weight: bold;
+    color:white;
+    font-size: 20px;
+}
+
+.properties {
+    display: flex;
+    gap: 10px;
+}
+
+#pattern {
+    height: 23px;
+}
+
+.properties button {
+    color: white;
+    border-radius: 20px;
+    background: linear-gradient(rgb(32, 121, 222), rgb(69, 69, 213));
+    font-family: Arial, sans-serif;
+    width: 100px;
+    height: 30px;
+    border: none;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.format {
+    display: flex;
+    gap: 15px;
+}
+
+#btnStyle {
+    border-radius: 20px;
+    height: 40px;
+    width: 40px;
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+    background: linear-gradient(rgb(60, 134, 219), rgb(99, 128, 213));
+    border: none;
+    padding-bottom: 5px;
+    cursor: pointer;
+}
+
+#btnColor {
+    width: 50px;
+    margin-top: 5px;
+}
+
+#sampleText {
+    margin-top: 7px;
+    font-size: 19px;
+    background-color: yellow;
+    color: red;
+    height: 25px;
+}
+
+
+
+#textWrap {
+    border: none;
 }
 
 
