@@ -118,6 +118,11 @@ nav li.active {
     margin-top: -5px;
 }
 
+.format {
+    display: flex;
+    gap: 15px;
+}
+
 
 .ControlBar {
     display: flex;
@@ -129,6 +134,40 @@ nav li.active {
     height: 50px;
     border-top-right-radius: 5px;
     border-top-left-radius: 5px;
+}
+
+.popup {
+    position: absolute;
+    top: 65px;
+    left: 0px;
+    background: rgb(174, 209, 247);
+    border-radius: 5px;
+    padding: 5px 5px;
+    font-size: 15px;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    opacity: 1;
+    z-index: 10;
+}
+
+.hidden {
+  opacity: 0;
+  transform: translateY(-10px);
+  pointer-events: none;
+}
+
+
+#stylePanel {
+    display: flex;
+    flex-direction: column;
+    gap: 0px; 
+}
+
+#stylePanel label{
+    color: black;
+    display: flex;
+    align-items: center;
+    line-height: 1.1; 
+    gap: 3px;
 }
 
 .text {
@@ -185,10 +224,6 @@ nav li.active {
     transition: transform 0.08s ease, box-shadow 0.08s ease;
 }
 
-.format {
-    display: flex;
-    gap: 15px;
-}
 
 #btnStyle {
     border-radius: 20px;
@@ -203,6 +238,11 @@ nav li.active {
     cursor: pointer;
 }
 
+#btnStyle.active-border {
+    border: 2px solid white;
+}
+
+
 #btnColor {
     width: 50px;
     margin-top: 5px;
@@ -215,8 +255,6 @@ nav li.active {
     color: red;
     height: 25px;
 }
-
-
 
 #textWrap {
     border: none;
