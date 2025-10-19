@@ -153,6 +153,17 @@ nav li.active {
     display: block;
 }
 
+.ghost {
+  border: 2px solid orange;
+  border-radius: 4px;
+  box-shadow: 0 6px 12px rgba(255, 165, 0, 0.6);
+}
+
+.hover-target {
+  outline: 3px dashed orange;
+  outline-offset: -3px;
+}
+
 #ProcessText {
     margin-top: -5px;
     border: 1px solid grey;

@@ -70,3 +70,46 @@ $(".toggle-btn").on('click', function() {
         $(news).css('border', '1px solid #d2b48c');
     }
 })
+
+//drag and drop NEWS button
+let dragging = null;
+let ghost = null;
+let offsetY = 0;
+let hoverTarget = null;
+let dragStartY = 0;
+
+$(".drag-btn").on("mousedown", function (e) {
+    e.preventDefault();
+
+    dragging = $(this).closest(".news");
+    if (!dragging.length) {
+        return;
+    }
+
+    offsetY = e.pageY - dragging.offset().top;
+    dragStartY = e.pageY;
+    hoverTarget = null;
+
+});
+
+function ensureGhost() {
+    if (!dragging || ghost) {
+        return;
+    }
+
+    const side = $("#side");
+
+    ghost = dragging.clone().addClass("ghost");
+    ghost.css({
+        position: "absolute",
+        top: dragging.position().top,
+        left: dragging.position().left,
+        width: dragging.outerWidth(),
+        opacity: 0.6,
+        pointerEvents: "none",
+        zIndex: 1000,
+    });
+
+    side.append(ghost);
+}
+
