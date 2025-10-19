@@ -44,3 +44,29 @@ $(document).on('click', function(e) {
         $("#btnStyle").removeClass('active-border');
     }
 });
+
+//toggle and drab button for NEWS
+$(".toggle-btn").on('click', function() {
+    const news = $(this).closest(".news");
+    const header = news.find(".news-header");
+
+    news.toggleClass("expanded");
+    const isExpanded = news.hasClass("expanded");
+
+    if(isExpanded){
+        $(this).text("↓");
+        $(header).css({
+            background: "#ff8c00",
+            color: "white"
+        });
+        $(news).css('border', '1px solid grey');
+    }
+    else{
+        $(this).text("▶");
+        $(header).css({
+            background: "#f5cf8a",
+            color: "#98999c"
+        });
+        $(news).css('border', '1px solid #d2b48c');
+    }
+})
