@@ -91,6 +91,7 @@ $(".drag-btn").on("mousedown", function (e) {
     hoverTarget = null;
 
     $(document).on("mousemove.drag", onDrag);
+    $(document).on("mouseup.drag", onDrop);
 });
 
 function ensureGhost() {
@@ -152,5 +153,31 @@ function onDrag(e) {
             return false;
         }
     });
+  }
+
+  function onDrop() {
+    $(document).off("mousemove.drag mouseup.drag");
+    $(".news").removeClass("hover-target");
+
+    if (ghost && dragging && hoverTarget) {
+      const hoverTop = hoverTarget.offset().top;
+      const hoverHeight = hoverTarget.outerHeight();
+      const triggerZone = hoverTop + hoverHeight * 0.33;
+
+      if (ghost.offset().top < triggerZone) {
+        hoverTarget.before(dragging);
+      } else {
+        hoverTarget.after(dragging);
+      }
+    }
+
+    if (ghost) {
+      ghost.remove();
+    }
+
+    ghost = null;
+    dragging = null;
+    hoverTarget = null;
+    dragStartY = 0;
   }
 
