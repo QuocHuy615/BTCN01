@@ -123,6 +123,36 @@ nav li.active {
     transition: background-color 0.3s;
 }
 
+.news-header .drag-btn {
+    font-size: 22px;
+    cursor: ns-resize;
+    user-select: none;
+    font-weight: 900;
+}
+
+.news-header .toggle-btn {
+    font-size: 22px;
+    cursor: pointer;
+    user-select: none;
+    transition: 0.2s;
+    font-weight: 900;
+}
+
+.news-content {
+    display: none;
+    padding: 5px;
+    color: #1033b2;
+    font-size: 17px;
+}
+
+.news p {
+    margin-left: 7px;
+}
+
+.news.expanded .news-content {
+    display: block;
+}
+
 #ProcessText {
     margin-top: -5px;
     border: 1px solid grey;
@@ -310,6 +340,8 @@ main {
     outline: none;
 }
 
+
+
 .controls {
     display: flex;
     position: absolute;
@@ -317,11 +349,6 @@ main {
     left: 40%;
     gap: 8px;
 }
-
-#btnAdd {
-
-}
-
 
 #footer {
     height: 33px;
