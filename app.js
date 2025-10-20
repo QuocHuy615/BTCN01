@@ -327,4 +327,7 @@ function escapeRegex(str) {
 });
 
 let originalText = $("#mainText").html();
+$("#btnReset").on('click', function() {
+    $("#mainText").html(originalText);
+})
 
