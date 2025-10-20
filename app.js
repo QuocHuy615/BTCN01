@@ -412,6 +412,66 @@ $(document).on('mousedown', '.animal', function(e) {
         pointerEvents: 'none'
     }).appendTo('body').addClass('dragging');
 
-    
+    // track mouse
+    $(document).on('mousemove.customdrag', function(ev) {
+        if (!__dragging) return;
+        __dragging.css({ left: ev.pageX - __offsetX, top: ev.pageY - __offsetY });
+
+        const el = document.elementFromPoint(ev.clientX, ev.clientY);
+        const $slot = $(el).closest('.animal');
+    });
+
+    $(document).on('mouseup.customdrag', function(ev) {
+        $(document).off('mousemove.customdrag mouseup.customdrag');
+
+        if (!__dragging) return;
+
+        const el = document.elementFromPoint(ev.clientX, ev.clientY);
+        let $targetSlot = $(el).closest('.animal');
+        if (!$targetSlot.length) {
+            // fallback: compute nearest cell
+            const $grid = $('.grid');
+            const cols = 5;
+            const totalSlots = $grid.find('.animal').length;
+            const gridOffset = $grid.offset();
+            const gridWidth = $grid.width();
+            const cellWidth = gridWidth / cols;
+            const cellHeight = $grid.find('.animal').first().outerHeight() || 100;
+            const x = ev.clientX - gridOffset.left;
+            const y = ev.clientY - gridOffset.top;
+            let col = Math.floor(x / cellWidth);
+            let row = Math.floor(y / cellHeight);
+            col = Math.max(0, Math.min(cols - 1, col));
+            const rows = Math.ceil(totalSlots / cols);
+            row = Math.max(0, Math.min(rows - 1, row));
+            const index = row * cols + col;
+            $targetSlot = $grid.find('.animal').eq(index);
+        }
+
+        if (!$targetSlot.length) {
+            __dragging.css({ position: '', left: '', top: '', width: '', height: '', zIndex: '', pointerEvents: '' }).removeClass('dragging');
+            __dragging = null; __originSlot = null; __originPlaceholder = null;
+            return;
+        }
+
+        const $targetElem = $targetSlot;
+        // markers
+        const $tmpB = $('<div>').insertAfter($targetElem);
+
+        $targetElem.insertAfter($tmpA);
+
+
+        $tmpB.replaceWith(__dragging);
+
+        __dragging.css({ position: '', left: '', top: '', width: '', height: '', zIndex: '', pointerEvents: '' }).removeClass('dragging');
+
+        __dragging = null; __originSlot = null; __originPlaceholder = null;
+
+        // update empty class
+        $('.grid .animal').each(function() {
+            const $a = $(this);
+            if ($a.find('.icon').length === 0) $a.addClass('empty'); else $a.removeClass('empty');
+        });
+    });
 });
 
