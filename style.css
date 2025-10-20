@@ -86,7 +86,7 @@ nav li.active {
     color: #111;    
     padding: 8px 6px;
     line-height: 1.6;
-    font-size: 24px;
+    font-size: 22px;
     margin: 10px 0 20px 5px;
 }
 
@@ -323,7 +323,6 @@ main {
     display: flex;
     justify-content: space-between;
     position: relative;
-    margin-top: 10px;
     background: linear-gradient(rgb(182, 207, 242), rgb(73, 102, 205));
     height: 50px;
     border-top-left-radius: 5px;
@@ -351,14 +350,54 @@ main {
     outline: none;
 }
 
-
-
 .controls {
     display: flex;
     position: absolute;
     align-items: center;
     left: 40%;
     gap: 8px;
+}
+
+#dragDropArea {
+    border-radius: 5px;
+    border: 1px solid grey;
+    margin-top: 12px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    min-height: 400px;
+    justify-content: center;
+    align-content: start;
+}
+
+.animal {
+    background: linear-gradient(#4b7bd8, #2f5bb5);
+    border-radius: 5px;
+    text-align: center;
+    padding: 10px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    color: white;
+}
+
+.animal-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.icon {
+    font-size: 30px;
+}
+
+.name {
+    margin-top: 5px;
+    font-size: 15px;
 }
 
 #footer {
