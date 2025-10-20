@@ -222,7 +222,72 @@ $("#optBackground, #btnColor").on('input change', function(){
     updateHighlightStyle();
 });
 
+//highlight
+$("#btnHighlight").on("click", function () {
+    const pattern = $("#pattern").val();
+    if (!pattern) return;
 
+    function looksLikeRegex(s) {
+        return /[.*+?^${}()|[\]\\\[\]]/.test(s);
+    }
+
+    let regex;
+    const treatAsRegex = looksLikeRegex(pattern);
+    if (treatAsRegex) {
+        try {
+            regex = new RegExp(pattern, 'gi');
+        } catch (err) {
+            // invalid regex — fall back to literal search by escaping
+            const safe = pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            regex = new RegExp(safe, 'gi');
+        }
+    } else {
+        const safe = pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        regex = new RegExp(safe, 'gi');
+    }
+
+    const $main = $("#mainText");
+
+    // Remove existing highlights safely
+    $main.find("span.highlight").each(function () {
+        $(this).replaceWith($(this).text());
+    });
+
+    // Walk text nodes and wrap matches with span.highlight using jQuery
+    function process($node) {
+        $node.contents().each(function () {
+            if (this.nodeType === 3) { // text node
+                const text = this.nodeValue;
+                regex.lastIndex = 0;
+                let match;
+                const nodes = [];
+                let lastIndex = 0;
+                while ((match = regex.exec(text)) !== null) {
+                    const before = text.substring(lastIndex, match.index);
+                    if (before) nodes.push(document.createTextNode(before));
+                    const span = document.createElement('span');
+                    span.className = 'highlight';
+                    span.textContent = match[0];
+                    nodes.push(span);
+                    lastIndex = match.index + match[0].length;
+                }
+                if (lastIndex > 0) {
+                    const after = text.substring(lastIndex);
+                    if (after) nodes.push(document.createTextNode(after));
+                    $(this).replaceWith(nodes);
+                }
+            } else if (this.nodeType === 1) {
+                const $el = $(this);
+                if ($el.hasClass('highlight')) return;
+                if ($el.is('script, style')) return;
+                process($el);
+            }
+        });
+    }
+
+    process($main);
+    updateHighlightStyle();
+});
 
   function updateHighlightStyle() {
     const $sample = $("#sampleText");
