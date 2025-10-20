@@ -326,8 +326,45 @@ function escapeRegex(str) {
     $main.html(html);
 });
 
+//reset
 let originalText = $("#mainText").html();
 $("#btnReset").on('click', function() {
     $("#mainText").html(originalText);
 })
+
+
+//create grid
+$(document).ready(function() {
+    const $container = $(".grid");
+    const totalSlots = 15; 
+
+    for (let i = 0; i < totalSlots; i++) {
+        $container.append('<div class="animal empty"></div>');
+    }
+});
+
+function createAnimal(name, icon) { 
+    return $(`
+        <div class="animal">
+            <div class="animal-content">
+                <span class="icon">${icon}</span>
+                <p class="name">${name}</p>
+            </div>
+        </div>
+    `);
+}
+
+$("#btnAdd").on('click', function() {
+    const icon = $("#slctAnimal").val();
+    const name = $("#slctAnimal option:selected").data("name");
+
+    const $animal = createAnimal(name, icon);
+
+    const $emptySlot = $(".grid").find(".animal.empty").first();
+
+    if($emptySlot.length){
+        $emptySlot.replaceWith($animal);
+    }
+});
+
 
