@@ -326,3 +326,5 @@ function escapeRegex(str) {
     $main.html(html);
 });
 
+let originalText = $("#mainText").html();
+
