@@ -210,3 +210,7 @@ function onDrag(e) {
     }
   });
 
+$("#optBackground").on('input change', function(){
+    const highlightColor = $(this).val();
+    $("#sampleText").css('background-color', highlightColor);
+  });
