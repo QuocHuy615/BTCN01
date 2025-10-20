@@ -237,7 +237,7 @@ $("#btnHighlight").on("click", function () {
         try {
             regex = new RegExp(pattern, 'gi');
         } catch (err) {
-            // invalid regex — fall back to literal search by escaping
+            //check invalid regex
             const safe = pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             regex = new RegExp(safe, 'gi');
         }
@@ -305,3 +305,32 @@ $("#btnHighlight").on("click", function () {
       "text-decoration": deco
     });
   }
+
+  //delete
+  $("#btnDelete").on("click", function () {
+    const pattern = $("#pattern").val().trim();
+    if (!pattern) return;
+
+    const hasMeta = /[.*+?^${}()|[\]\\\[\]]/.test(pattern);
+    let regex;
+
+    try {
+        regex = hasMeta ? new RegExp(pattern, "gi") 
+                        : new RegExp(escapeRegex(pattern), "gi");
+    } catch {
+        regex = new RegExp(escapeRegex(pattern), "gi");
+    }
+
+    const $main = $("#mainText");
+    let html = $main.html();
+
+    html = html.replace(/<span class="highlight">(.*?)<\/span>/g, "$1");
+
+    html = html.replace(regex, "");
+
+    $main.html(html);
+});
+
+function escapeRegex(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
