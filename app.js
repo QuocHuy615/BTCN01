@@ -381,25 +381,32 @@ $("#btnAdd").on('click', function() {
 });
 
 
-let __dragging = null;       
-let __originSlot = null;     
-let __originPlaceholder = null;
+let __dragging = null;       // jQuery element being dragged (the original)
+let __originSlot = null;     // original slot element
+let __originPlaceholder = null; // placeholder element at origin
 let __offsetX = 0, __offsetY = 0;
 
+// start drag on mousedown on an animal (not empty) — move original element itself
 $(document).on('mousedown', '.animal', function(e) {
     const $this = $(this);
     if ($this.hasClass('empty')) return;
-    if (e.which !== 1) return; 
+    if (e.which !== 1) return; // left button only
 
     e.preventDefault();
     __dragging = $this;
     __originSlot = $this.closest('.animal');
 
+    // create a placeholder at origin to keep layout
+    __originPlaceholder = $('<div class="animal placeholder"></div>');
+    __originSlot.after(__originPlaceholder);
+
+    // move original to body and absolutely position it
     const rect = $this[0].getBoundingClientRect();
     __offsetX = e.pageX - (rect.left + window.pageXOffset);
     __offsetY = e.pageY - (rect.top + window.pageYOffset);
     const comp = window.getComputedStyle($this[0]);
 
+    // detach and append to body so it floats above layout
     $this.css({
         position: 'absolute',
         left: rect.left + window.pageXOffset + 'px',
@@ -419,6 +426,7 @@ $(document).on('mousedown', '.animal', function(e) {
 
         const el = document.elementFromPoint(ev.clientX, ev.clientY);
         const $slot = $(el).closest('.animal');
+       
     });
 
     $(document).on('mouseup.customdrag', function(ev) {
@@ -429,7 +437,6 @@ $(document).on('mousedown', '.animal', function(e) {
         const el = document.elementFromPoint(ev.clientX, ev.clientY);
         let $targetSlot = $(el).closest('.animal');
         if (!$targetSlot.length) {
-            // fallback: compute nearest cell
             const $grid = $('.grid');
             const cols = 5;
             const totalSlots = $grid.find('.animal').length;
@@ -449,19 +456,29 @@ $(document).on('mousedown', '.animal', function(e) {
         }
 
         if (!$targetSlot.length) {
+            __originPlaceholder.replaceWith(__dragging);
+            __dragging.css({ position: '', left: '', top: '', width: '', height: '', zIndex: '', pointerEvents: '' }).removeClass('dragging');
+            __dragging = null; __originSlot = null; __originPlaceholder = null;
+            return;
+        }
+
+        if ($targetSlot[0] === __originPlaceholder[0]) {
+            __originPlaceholder.replaceWith(__dragging);
             __dragging.css({ position: '', left: '', top: '', width: '', height: '', zIndex: '', pointerEvents: '' }).removeClass('dragging');
             __dragging = null; __originSlot = null; __originPlaceholder = null;
             return;
         }
 
         const $targetElem = $targetSlot;
-        // markers
+        const $tmpA = $('<div>').insertAfter(__originPlaceholder);
         const $tmpB = $('<div>').insertAfter($targetElem);
 
+        __originPlaceholder.insertAfter($tmpB);
         $targetElem.insertAfter($tmpA);
 
+        $tmpA.remove(); $tmpB.remove();
 
-        $tmpB.replaceWith(__dragging);
+        __originPlaceholder.replaceWith(__dragging);
 
         __dragging.css({ position: '', left: '', top: '', width: '', height: '', zIndex: '', pointerEvents: '' }).removeClass('dragging');
 
