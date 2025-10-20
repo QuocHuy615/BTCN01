@@ -208,9 +208,35 @@ function onDrag(e) {
             $("#sampleText").css('text-decoration', 'none');
         }
     }
+
+    updateHighlightStyle();
   });
 
-$("#optBackground").on('input change', function(){
-    const highlightColor = $(this).val();
-    $("#sampleText").css('background-color', highlightColor);
-  });
+$("#optBackground, #btnColor").on('input change', function(){
+    const highlightColor = $("#optBackground").val();
+    const textColor = $("#btnColor").val();
+    $("#sampleText").css({
+        background: highlightColor,
+        color: textColor
+    });    
+    updateHighlightStyle();
+});
+
+
+
+  function updateHighlightStyle() {
+    const $sample = $("#sampleText");
+    const color = $sample.css("color");
+    const bg = $sample.css("background-color");
+    const weight = $sample.css("font-weight");
+    const style = $sample.css("font-style");
+    const deco = $sample.css("text-decoration");
+
+    $(".highlight").css({
+      color: color,
+      "background-color": bg,
+      "font-weight": weight,
+      "font-style": style,
+      "text-decoration": deco
+    });
+  }
