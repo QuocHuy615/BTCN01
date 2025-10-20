@@ -139,7 +139,15 @@ function onDrag(e) {
     const maxY = side.height() - ghost.outerHeight();
     const newY = Math.max(0, Math.min(relY, maxY));
 
-    ghost.css({ top: newY, left: dragging.position().left });
+        const rect = dragging[0].getBoundingClientRect();
+        ghost.css({
+            top: newY,
+            left: dragging.position().left,
+            width: Math.round(rect.width) + 'px',
+            height: Math.round(rect.height) + 'px',
+            boxSizing: window.getComputedStyle(dragging[0]).boxSizing,
+            margin: 0,
+        });
 
     // Detect which news item is hovered
     hoverTarget = null;
@@ -344,14 +352,19 @@ $(document).ready(function() {
 });
 
 function createAnimal(name, icon) { 
-    return $(`
-        <div class="animal">
+    // Each animal gets a unique data-id and is draggable
+    if (typeof window.__animalCounter === 'undefined') window.__animalCounter = 0;
+    window.__animalCounter += 1;
+    const id = 'animal-' + window.__animalCounter;
+    const $el = $(
+        `<div class="animal" data-id="${id}">
             <div class="animal-content">
                 <span class="icon">${icon}</span>
-                <p class="name">${name}</p>
+                <p class="name">${name || ''}</p>
             </div>
-        </div>
-    `);
+        </div>`
+    );
+    return $el;
 }
 
 $("#btnAdd").on('click', function() {
@@ -367,4 +380,38 @@ $("#btnAdd").on('click', function() {
     }
 });
 
+
+let __dragging = null;       
+let __originSlot = null;     
+let __originPlaceholder = null;
+let __offsetX = 0, __offsetY = 0;
+
+$(document).on('mousedown', '.animal', function(e) {
+    const $this = $(this);
+    if ($this.hasClass('empty')) return;
+    if (e.which !== 1) return; 
+
+    e.preventDefault();
+    __dragging = $this;
+    __originSlot = $this.closest('.animal');
+
+    const rect = $this[0].getBoundingClientRect();
+    __offsetX = e.pageX - (rect.left + window.pageXOffset);
+    __offsetY = e.pageY - (rect.top + window.pageYOffset);
+    const comp = window.getComputedStyle($this[0]);
+
+    $this.css({
+        position: 'absolute',
+        left: rect.left + window.pageXOffset + 'px',
+        top: rect.top + window.pageYOffset + 'px',
+        width: Math.round(rect.width) + 'px',
+        height: Math.round(rect.height) + 'px',
+        boxSizing: comp.boxSizing,
+        margin: 0,
+        zIndex: 2000,
+        pointerEvents: 'none'
+    }).appendTo('body').addClass('dragging');
+
+    
+});
 
