@@ -181,3 +181,32 @@ function onDrag(e) {
     dragStartY = 0;
   }
 
+  //sample text
+  $("input[type='checkbox']").on('change', function() {
+    const id = $(this).attr("id");
+    const ischeck = $(this).is(":checked");
+
+    if(ischeck){
+        if(id === "optBold"){
+            $("#sampleText").css('font-weight', 'bold');
+        }
+        if(id === "optItalic"){
+            $("#sampleText").css('font-style', 'italic');
+        }
+        if(id === "optUnderline"){
+            $("#sampleText").css('text-decoration', 'underline');
+        }
+    }
+    else{
+        if(id === "optBold"){
+            $("#sampleText").css('font-weight', 'normal');
+        }
+        if(id === "optItalic"){
+            $("#sampleText").css('font-style', 'normal');
+        }
+        if(id === "optUnderline"){
+            $("#sampleText").css('text-decoration', 'none');
+        }
+    }
+  });
+
