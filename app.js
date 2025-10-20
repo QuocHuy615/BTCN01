@@ -227,24 +227,8 @@ $("#btnHighlight").on("click", function () {
     const pattern = $("#pattern").val();
     if (!pattern) return;
 
-    function looksLikeRegex(s) {
-        return /[.*+?^${}()|[\]\\\[\]]/.test(s);
-    }
-
-    let regex;
-    const treatAsRegex = looksLikeRegex(pattern);
-    if (treatAsRegex) {
-        try {
-            regex = new RegExp(pattern, 'gi');
-        } catch (err) {
-            //check invalid regex
-            const safe = pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            regex = new RegExp(safe, 'gi');
-        }
-    } else {
-        const safe = pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        regex = new RegExp(safe, 'gi');
-    }
+    const regex = buildRegex(pattern);
+    if (!regex) return;
 
     const $main = $("#mainText");
 
@@ -289,6 +273,24 @@ $("#btnHighlight").on("click", function () {
     updateHighlightStyle();
 });
 
+function buildRegex(pattern) {
+    if (!pattern) return null;
+
+    const hasMeta = /[.*+?^${}()|[\]\\\[\]]/.test(pattern);
+    try {
+        if (hasMeta) {
+            return new RegExp(pattern, "gi");
+        }
+        return new RegExp(escapeRegex(pattern), "gi");
+    } catch {
+        return new RegExp(escapeRegex(pattern), "gi");
+    }
+}
+
+function escapeRegex(str) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
   function updateHighlightStyle() {
     const $sample = $("#sampleText");
     const color = $sample.css("color");
@@ -311,15 +313,8 @@ $("#btnHighlight").on("click", function () {
     const pattern = $("#pattern").val().trim();
     if (!pattern) return;
 
-    const hasMeta = /[.*+?^${}()|[\]\\\[\]]/.test(pattern);
-    let regex;
-
-    try {
-        regex = hasMeta ? new RegExp(pattern, "gi") 
-                        : new RegExp(escapeRegex(pattern), "gi");
-    } catch {
-        regex = new RegExp(escapeRegex(pattern), "gi");
-    }
+    const regex = buildRegex(pattern);
+    if (!regex) return;
 
     const $main = $("#mainText");
     let html = $main.html();
@@ -331,6 +326,3 @@ $("#btnHighlight").on("click", function () {
     $main.html(html);
 });
 
-function escapeRegex(str) {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
