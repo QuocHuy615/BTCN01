@@ -382,7 +382,7 @@ $("#btnAdd").on('click', function() {
 
 function refreshGridEmptySlots() {
   const $grid = $(".grid");
-  const totalSlots = 15; // hoặc tuỳ ý
+  const totalSlots = 15; 
   const currentCount = $grid.find(".animal").length;
 
   for (let i = currentCount; i < totalSlots; i++) {
@@ -397,40 +397,32 @@ function refreshGridEmptySlots() {
 }
 
 $(function() {
-  let $dragging = null;          // con vật đang kéo
-  let $placeholder = null;       // ô trống giả tạm
-  let dragIndex = -1;            // vị trí ban đầu trong grid
-  let $hoverTarget = null;       // phần tử đang hover
-
+  let $dragging = null, $placeholder = null, dragIndex = -1;
   const $grid = $(".grid");
 
-  // ===== 1️⃣ Bắt đầu kéo =====
   $grid.on("mousedown", ".animal.filled", function(e) {
-    if (e.which !== 1) return; // chỉ click chuột trái
+    if (e.which !== 1) return;
     e.preventDefault();
 
     $dragging = $(this);
     dragIndex = $dragging.index();
 
     const rect = $dragging[0].getBoundingClientRect();
-
-    // tạo placeholder giữ chỗ
     $placeholder = $('<div class="animal placeholder"></div>');
     $dragging.after($placeholder);
 
-    // di chuyển con vật ra ngoài để kéo tự do
     $dragging.css({
       position: "absolute",
       width: rect.width,
       height: rect.height,
       left: rect.left + window.scrollX,
       top: rect.top + window.scrollY,
-      zIndex: 1000,
-      cursor: "grabbing",
-      pointerEvents: "none",
+      zIndex: 2000,
       opacity: 0.9,
-      boxShadow: "0 6px 15px rgba(0,0,0,0.3)",
-      transition: "none"
+      pointerEvents: "none",
+      transform: "scale(1.05)",
+      boxShadow: "0 8px 20px rgba(0,0,0,0.4)",
+      transition: "transform 0.2s ease"
     }).addClass("dragging").appendTo("body");
 
     $(document)
@@ -438,62 +430,77 @@ $(function() {
       .on("mouseup.gridDrag", onDrop);
   });
 
-  // ===== 2️⃣ Khi di chuyển =====
   function onDrag(e) {
     if (!$dragging) return;
-
-    // cập nhật vị trí con vật
     $dragging.css({
       left: e.pageX - $dragging.width() / 2,
       top: e.pageY - $dragging.height() / 2
     });
 
-    // xác định phần tử đang hover trong grid
     const el = document.elementFromPoint(e.clientX, e.clientY);
     const $target = $(el).closest(".animal");
-    $(".animal").removeClass("highlight shift-left");
 
+    $(".animal").removeClass("highlight");
     if ($target.length && !$target.is($placeholder)) {
-      $hoverTarget = $target.addClass("highlight");
+      $target.addClass("highlight");
 
       const targetIndex = $target.index();
       const currentIndex = $placeholder.index();
+      capturePositions();   
 
-      // nếu vị trí đích khác, chèn placeholder
-      if (targetIndex > currentIndex) {
-        $target.after($placeholder);
-      } else if (targetIndex < currentIndex) {
-        $target.before($placeholder);
-      }
+      if (targetIndex > currentIndex) $target.after($placeholder);
+      else if (targetIndex < currentIndex) $target.before($placeholder);
 
-      // hiệu ứng: các animal giữa placeholder và dragIndex dịch trái
-      animateShift(currentIndex, targetIndex);
+      animateGrid();      
     }
   }
 
-  // ===== 3️⃣ Hàm animation dịch trái =====
-  function animateShift(current, target) {
-    const $items = $grid.find(".animal").not(".placeholder, .dragging");
-    $items.removeClass("shift-left");
-    const start = Math.min(current, target);
-    const end = Math.max(current, target);
-    $items.slice(start, end).addClass("shift-left");
-  }
-
-  // ===== 4️⃣ Thả chuột =====
+  
   function onDrop() {
     $(document).off(".gridDrag");
-    $(".animal").removeClass("highlight shift-left");
+    $(".animal").removeClass("highlight");
 
     if (!$dragging || !$placeholder) return;
 
+    capturePositions();
     $placeholder.replaceWith($dragging);
-    $dragging.removeClass("dragging").removeAttr("style");
+    animateGrid();
 
-    $dragging = null;
-    $placeholder = null;
-    $hoverTarget = null;
-    dragIndex = -1;
+    $dragging.removeAttr("style").removeClass("dragging");
+    $dragging = $placeholder = null;
   }
+
+  let positions = new Map();
+
+  function capturePositions() {
+    positions.clear();
+    $(".grid .animal").each(function() {
+      const rect = this.getBoundingClientRect();
+      positions.set(this, { x: rect.left, y: rect.top });
+    });
+  }
+
+  function animateGrid() {
+  $(".grid .animal").each(function(i) {
+    const old = positions.get(this);
+    if (!old) return;
+    const rect = this.getBoundingClientRect();
+    const dx = old.x - rect.left;
+    const dy = old.y - rect.top;
+    if (dx || dy) {
+      $(this)
+        .css("transform", `translate3d(${dx}px, ${dy}px, 0)`)
+        .animate(
+          { dummy: 1 },
+          {
+            duration: 600 + i * 30,  
+            step: () => $(this).css("transform", "translate3d(0,0,0)"),
+            easing: "swing"
+          }
+        );
+    }
+  });
+}
 });
+
 
