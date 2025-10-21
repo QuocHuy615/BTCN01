@@ -1,3 +1,8 @@
+$.easing.easeOutCubic = function (x, t, b, c, d) {
+  return c * ((t = t / d - 1) * t * t + 1) + b;
+};
+
+
 $("nav li").on("click", function() {
     const index = $(this).index();
 
@@ -397,17 +402,43 @@ function refreshGridEmptySlots() {
 }
 
 $(function() {
-  let $dragging = null, $placeholder = null, dragIndex = -1;
+  let $dragging = null, $placeholder = null;
   const $grid = $(".grid");
+  let positions = new Map();
+
+  function capturePositions() {
+    positions.clear();
+    $(".grid .animal").each(function() {
+      const rect = this.getBoundingClientRect();
+      positions.set(this, { x: rect.left, y: rect.top });
+    });
+  }
+
+  function animateGrid() {
+    $(".grid .animal").each(function() {
+      const old = positions.get(this);
+      if (!old) return;
+      const rect = this.getBoundingClientRect();
+      const dx = old.x - rect.left;
+      const dy = old.y - rect.top;
+      if (dx || dy) {
+        $(this).css("transform", `translate3d(${dx}px, ${dy}px, 0)`);
+        $(this)[0].offsetHeight; 
+        $(this).css({
+          transform: "translate3d(0,0,0)",
+          transition: "transform 0.8s cubic-bezier(0.22, 1, 0.36, 1)"
+        });
+      }
+    });
+  }
 
   $grid.on("mousedown", ".animal.filled", function(e) {
     if (e.which !== 1) return;
     e.preventDefault();
 
     $dragging = $(this);
-    dragIndex = $dragging.index();
-
     const rect = $dragging[0].getBoundingClientRect();
+
     $placeholder = $('<div class="animal placeholder"></div>');
     $dragging.after($placeholder);
 
@@ -418,11 +449,10 @@ $(function() {
       left: rect.left + window.scrollX,
       top: rect.top + window.scrollY,
       zIndex: 2000,
-      opacity: 0.9,
-      pointerEvents: "none",
+      opacity: 0.95,
       transform: "scale(1.05)",
-      boxShadow: "0 8px 20px rgba(0,0,0,0.4)",
-      transition: "transform 0.2s ease"
+      boxShadow: "0 10px 25px rgba(0,0,0,0.4)",
+      pointerEvents: "none"
     }).addClass("dragging").appendTo("body");
 
     $(document)
@@ -440,67 +470,43 @@ $(function() {
     const el = document.elementFromPoint(e.clientX, e.clientY);
     const $target = $(el).closest(".animal");
 
-    $(".animal").removeClass("highlight");
     if ($target.length && !$target.is($placeholder)) {
-      $target.addClass("highlight");
-
+      capturePositions(); 
       const targetIndex = $target.index();
       const currentIndex = $placeholder.index();
-      capturePositions();   
-
       if (targetIndex > currentIndex) $target.after($placeholder);
       else if (targetIndex < currentIndex) $target.before($placeholder);
-
-      animateGrid();      
+      animateGrid(); 
     }
   }
 
-  
   function onDrop() {
-    $(document).off(".gridDrag");
-    $(".animal").removeClass("highlight");
+  $(document).off(".gridDrag");
+  if (!$dragging || !$placeholder) return;
 
-    if (!$dragging || !$placeholder) return;
+  const current = $dragging.offset();
+  const target = $placeholder.offset();
 
-    capturePositions();
-    $placeholder.replaceWith($dragging);
-    animateGrid();
+  $dragging.animate(
+    {
+      top: target.top,
+      left: target.left
+    },
+    {
+      duration: 300, 
+      easing: "easeOutCubic", 
+      complete: function () {
+        $placeholder.replaceWith($dragging);
+        $dragging.removeAttr("style").removeClass("dragging");
+        $dragging = null;
+        $placeholder = null;
 
-    $dragging.removeAttr("style").removeClass("dragging");
-    $dragging = $placeholder = null;
-  }
-
-  let positions = new Map();
-
-  function capturePositions() {
-    positions.clear();
-    $(".grid .animal").each(function() {
-      const rect = this.getBoundingClientRect();
-      positions.set(this, { x: rect.left, y: rect.top });
-    });
-  }
-
-  function animateGrid() {
-  $(".grid .animal").each(function(i) {
-    const old = positions.get(this);
-    if (!old) return;
-    const rect = this.getBoundingClientRect();
-    const dx = old.x - rect.left;
-    const dy = old.y - rect.top;
-    if (dx || dy) {
-      $(this)
-        .css("transform", `translate3d(${dx}px, ${dy}px, 0)`)
-        .animate(
-          { dummy: 1 },
-          {
-            duration: 600 + i * 30,  
-            step: () => $(this).css("transform", "translate3d(0,0,0)"),
-            easing: "swing"
-          }
-        );
+        animateGrid();
+      }
     }
-  });
+  );
 }
 });
+
 
 
