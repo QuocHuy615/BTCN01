@@ -377,6 +377,8 @@ main {
     align-content: start;
     row-gap: 35px;
     column-gap: 13px;
+    position: relative; /* needed for absolute drop indicator and dragging */
+    overflow: hidden; /* clip sliding animals to grid */
 }
 
 .animal {
@@ -408,20 +410,30 @@ main {
     color: black;
 }
 
-.animalGhost{
-    position:absolute; 
-    z-index:9999; 
-    pointer-events:none;
-    opacity:.7; 
-    border-radius:5px;
-    height: 80px; 
-    width: 30px;
-}
-
 .empty{
     background: transparent;
     transition: background 0.2s;
     box-shadow: none;
+}
+
+.placeholder {
+  border: 2px dashed #aaa;
+  background: rgba(0,0,0,0.05);
+}
+
+.animal.highlight {
+  outline: 3px solid black;
+  box-shadow: 0 0 8px rgba(0,0,0,0.4);
+}
+
+.shift-left {
+  transform: translateX(-10px);
+  transition: transform 0.2s ease;
+}
+
+.dragging {
+  cursor: grabbing;
+  opacity: 0.9;
 }
 
 #footer {

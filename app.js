@@ -352,143 +352,148 @@ $(document).ready(function() {
 });
 
 function createAnimal(name, icon) { 
-    // Each animal gets a unique data-id and is draggable
-    if (typeof window.__animalCounter === 'undefined') window.__animalCounter = 0;
-    window.__animalCounter += 1;
-    const id = 'animal-' + window.__animalCounter;
-    const $el = $(
-        `<div class="animal" data-id="${id}">
-            <div class="animal-content">
-                <span class="icon">${icon}</span>
-                <p class="name">${name || ''}</p>
-            </div>
-        </div>`
-    );
-    return $el;
+  if (typeof window.__animalCounter === 'undefined') window.__animalCounter = 0;
+  window.__animalCounter += 1;
+  const id = 'animal-' + window.__animalCounter;
+
+  return $(`
+    <div class="animal filled" data-id="${id}">
+      <div class="animal-content">
+        <span class="icon">${icon}</span>
+        <p class="name">${name || ''}</p>
+      </div>
+    </div>
+  `);
 }
 
 $("#btnAdd").on('click', function() {
-    const icon = $("#slctAnimal").val();
-    const name = $("#slctAnimal option:selected").data("name");
+  const icon = $("#slctAnimal").val();
+  const name = $("#slctAnimal option:selected").data("name");
 
-    const $animal = createAnimal(name, icon);
+  const $animal = createAnimal(name, icon);
 
-    const $emptySlot = $(".grid").find(".animal.empty").first();
+  const $emptySlot = $(".grid").find(".animal.empty").first();
 
-    if($emptySlot.length){
-        $emptySlot.replaceWith($animal);
-    }
+  if ($emptySlot.length) {
+    $emptySlot.replaceWith($animal.hide().fadeIn(300));
+    refreshGridEmptySlots();
+  }
 });
 
+function refreshGridEmptySlots() {
+  const $grid = $(".grid");
+  const totalSlots = 15; // hoặc tuỳ ý
+  const currentCount = $grid.find(".animal").length;
 
-let __dragging = null;       // jQuery element being dragged (the original)
-let __originSlot = null;     // original slot element
-let __originPlaceholder = null; // placeholder element at origin
-let __offsetX = 0, __offsetY = 0;
+  for (let i = currentCount; i < totalSlots; i++) {
+    $grid.append('<div class="animal empty"></div>');
+  }
 
-// start drag on mousedown on an animal (not empty) — move original element itself
-$(document).on('mousedown', '.animal', function(e) {
-    const $this = $(this);
-    if ($this.hasClass('empty')) return;
-    if (e.which !== 1) return; // left button only
+  $grid.find(".animal").each(function() {
+    const $a = $(this);
+    if ($a.find(".icon").length === 0) $a.addClass("empty");
+    else $a.removeClass("empty");
+  });
+}
 
+$(function() {
+  let $dragging = null;          // con vật đang kéo
+  let $placeholder = null;       // ô trống giả tạm
+  let dragIndex = -1;            // vị trí ban đầu trong grid
+  let $hoverTarget = null;       // phần tử đang hover
+
+  const $grid = $(".grid");
+
+  // ===== 1️⃣ Bắt đầu kéo =====
+  $grid.on("mousedown", ".animal.filled", function(e) {
+    if (e.which !== 1) return; // chỉ click chuột trái
     e.preventDefault();
-    __dragging = $this;
-    __originSlot = $this.closest('.animal');
 
-    // create a placeholder at origin to keep layout
-    __originPlaceholder = $('<div class="animal placeholder"></div>');
-    __originSlot.after(__originPlaceholder);
+    $dragging = $(this);
+    dragIndex = $dragging.index();
 
-    // move original to body and absolutely position it
-    const rect = $this[0].getBoundingClientRect();
-    __offsetX = e.pageX - (rect.left + window.pageXOffset);
-    __offsetY = e.pageY - (rect.top + window.pageYOffset);
-    const comp = window.getComputedStyle($this[0]);
+    const rect = $dragging[0].getBoundingClientRect();
 
-    // detach and append to body so it floats above layout
-    $this.css({
-        position: 'absolute',
-        left: rect.left + window.pageXOffset + 'px',
-        top: rect.top + window.pageYOffset + 'px',
-        width: Math.round(rect.width) + 'px',
-        height: Math.round(rect.height) + 'px',
-        boxSizing: comp.boxSizing,
-        margin: 0,
-        zIndex: 2000,
-        pointerEvents: 'none'
-    }).appendTo('body').addClass('dragging');
+    // tạo placeholder giữ chỗ
+    $placeholder = $('<div class="animal placeholder"></div>');
+    $dragging.after($placeholder);
 
-    // track mouse
-    $(document).on('mousemove.customdrag', function(ev) {
-        if (!__dragging) return;
-        __dragging.css({ left: ev.pageX - __offsetX, top: ev.pageY - __offsetY });
+    // di chuyển con vật ra ngoài để kéo tự do
+    $dragging.css({
+      position: "absolute",
+      width: rect.width,
+      height: rect.height,
+      left: rect.left + window.scrollX,
+      top: rect.top + window.scrollY,
+      zIndex: 1000,
+      cursor: "grabbing",
+      pointerEvents: "none",
+      opacity: 0.9,
+      boxShadow: "0 6px 15px rgba(0,0,0,0.3)",
+      transition: "none"
+    }).addClass("dragging").appendTo("body");
 
-        const el = document.elementFromPoint(ev.clientX, ev.clientY);
-        const $slot = $(el).closest('.animal');
-       
+    $(document)
+      .on("mousemove.gridDrag", onDrag)
+      .on("mouseup.gridDrag", onDrop);
+  });
+
+  // ===== 2️⃣ Khi di chuyển =====
+  function onDrag(e) {
+    if (!$dragging) return;
+
+    // cập nhật vị trí con vật
+    $dragging.css({
+      left: e.pageX - $dragging.width() / 2,
+      top: e.pageY - $dragging.height() / 2
     });
 
-    $(document).on('mouseup.customdrag', function(ev) {
-        $(document).off('mousemove.customdrag mouseup.customdrag');
+    // xác định phần tử đang hover trong grid
+    const el = document.elementFromPoint(e.clientX, e.clientY);
+    const $target = $(el).closest(".animal");
+    $(".animal").removeClass("highlight shift-left");
 
-        if (!__dragging) return;
+    if ($target.length && !$target.is($placeholder)) {
+      $hoverTarget = $target.addClass("highlight");
 
-        const el = document.elementFromPoint(ev.clientX, ev.clientY);
-        let $targetSlot = $(el).closest('.animal');
-        if (!$targetSlot.length) {
-            const $grid = $('.grid');
-            const cols = 5;
-            const totalSlots = $grid.find('.animal').length;
-            const gridOffset = $grid.offset();
-            const gridWidth = $grid.width();
-            const cellWidth = gridWidth / cols;
-            const cellHeight = $grid.find('.animal').first().outerHeight() || 100;
-            const x = ev.clientX - gridOffset.left;
-            const y = ev.clientY - gridOffset.top;
-            let col = Math.floor(x / cellWidth);
-            let row = Math.floor(y / cellHeight);
-            col = Math.max(0, Math.min(cols - 1, col));
-            const rows = Math.ceil(totalSlots / cols);
-            row = Math.max(0, Math.min(rows - 1, row));
-            const index = row * cols + col;
-            $targetSlot = $grid.find('.animal').eq(index);
-        }
+      const targetIndex = $target.index();
+      const currentIndex = $placeholder.index();
 
-        if (!$targetSlot.length) {
-            __originPlaceholder.replaceWith(__dragging);
-            __dragging.css({ position: '', left: '', top: '', width: '', height: '', zIndex: '', pointerEvents: '' }).removeClass('dragging');
-            __dragging = null; __originSlot = null; __originPlaceholder = null;
-            return;
-        }
+      // nếu vị trí đích khác, chèn placeholder
+      if (targetIndex > currentIndex) {
+        $target.after($placeholder);
+      } else if (targetIndex < currentIndex) {
+        $target.before($placeholder);
+      }
 
-        if ($targetSlot[0] === __originPlaceholder[0]) {
-            __originPlaceholder.replaceWith(__dragging);
-            __dragging.css({ position: '', left: '', top: '', width: '', height: '', zIndex: '', pointerEvents: '' }).removeClass('dragging');
-            __dragging = null; __originSlot = null; __originPlaceholder = null;
-            return;
-        }
+      // hiệu ứng: các animal giữa placeholder và dragIndex dịch trái
+      animateShift(currentIndex, targetIndex);
+    }
+  }
 
-        const $targetElem = $targetSlot;
-        const $tmpA = $('<div>').insertAfter(__originPlaceholder);
-        const $tmpB = $('<div>').insertAfter($targetElem);
+  // ===== 3️⃣ Hàm animation dịch trái =====
+  function animateShift(current, target) {
+    const $items = $grid.find(".animal").not(".placeholder, .dragging");
+    $items.removeClass("shift-left");
+    const start = Math.min(current, target);
+    const end = Math.max(current, target);
+    $items.slice(start, end).addClass("shift-left");
+  }
 
-        __originPlaceholder.insertAfter($tmpB);
-        $targetElem.insertAfter($tmpA);
+  // ===== 4️⃣ Thả chuột =====
+  function onDrop() {
+    $(document).off(".gridDrag");
+    $(".animal").removeClass("highlight shift-left");
 
-        $tmpA.remove(); $tmpB.remove();
+    if (!$dragging || !$placeholder) return;
 
-        __originPlaceholder.replaceWith(__dragging);
+    $placeholder.replaceWith($dragging);
+    $dragging.removeClass("dragging").removeAttr("style");
 
-        __dragging.css({ position: '', left: '', top: '', width: '', height: '', zIndex: '', pointerEvents: '' }).removeClass('dragging');
-
-        __dragging = null; __originSlot = null; __originPlaceholder = null;
-
-        // update empty class
-        $('.grid .animal').each(function() {
-            const $a = $(this);
-            if ($a.find('.icon').length === 0) $a.addClass('empty'); else $a.removeClass('empty');
-        });
-    });
+    $dragging = null;
+    $placeholder = null;
+    $hoverTarget = null;
+    dragIndex = -1;
+  }
 });
 
