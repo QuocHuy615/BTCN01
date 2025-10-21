@@ -481,31 +481,30 @@ $(function() {
   }
 
   function onDrop() {
-  $(document).off(".gridDrag");
-  if (!$dragging || !$placeholder) return;
+    $(document).off(".gridDrag");
+    if (!$dragging || !$placeholder) return;
 
-  const current = $dragging.offset();
-  const target = $placeholder.offset();
+    const current = $dragging.offset();
+    const target = $placeholder.offset();
 
-  $dragging.animate(
+    $dragging.animate(
     {
-      top: target.top,
-      left: target.left
+        top: target.top,
+        left: target.left
     },
     {
-      duration: 300, 
-      easing: "easeOutCubic", 
-      complete: function () {
-        $placeholder.replaceWith($dragging);
-        $dragging.removeAttr("style").removeClass("dragging");
-        $dragging = null;
-        $placeholder = null;
+        duration: 300, 
+        easing: "easeOutCubic", 
+        complete: function () {
+            $placeholder.replaceWith($dragging);
+            $dragging.removeAttr("style").removeClass("dragging");
+            $dragging = null;
+            $placeholder = null;
 
-        animateGrid();
-      }
+            animateGrid();
+        }
+    });
     }
-  );
-}
 });
 
 
