@@ -415,22 +415,22 @@ $(function() {
   }
 
   function animateGrid() {
-    $(".grid .animal").each(function() {
-      const old = positions.get(this);
-      if (!old) return;
-      const rect = this.getBoundingClientRect();
-      const dx = old.x - rect.left;
-      const dy = old.y - rect.top;
-      if (dx || dy) {
+  $(".grid .animal").each(function(i) {
+    const old = positions.get(this);
+    if (!old) return;
+    const rect = this.getBoundingClientRect();
+    const dx = old.x - rect.left;
+    const dy = old.y - rect.top;
+    if (dx || dy) {
         $(this).css("transform", `translate3d(${dx}px, ${dy}px, 0)`);
-        $(this)[0].offsetHeight; 
+        this.offsetHeight; // force reflow
         $(this).css({
-          transform: "translate3d(0,0,0)",
-          transition: "transform 0.8s cubic-bezier(0.22, 1, 0.36, 1)"
+            transform: "translate3d(0,0,0)",
+            transition: `transform 1.2s cubic-bezier(0.25, 1, 0.5, 1) ${i * 0.05}s`
         });
-      }
+        }
     });
-  }
+    }
 
   $grid.on("mousedown", ".animal.filled", function(e) {
     if (e.which !== 1) return;
